@@ -1,1 +1,243 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="utf-8"/>
+    <head>
+        <title>Plotting histograms</title>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
 
+        <style>
+         #title {
+            color:rgb(29, 29, 31);
+            font-size:25px;
+            }
+             body {background-color: white;}
+            th{
+                color:blue;
+            }
+            .name{
+            Color: red;
+            border: solid black 1pt;
+            }
+            .name:hover{
+                Border-width:2pt;
+                }
+
+            .date {
+                color: green;
+            }
+            .date:hover
+            {
+                font-weight: bold;
+            }
+            #myCanvas{
+                background-color:rgb(238, 238, 235) ;
+
+            }
+
+            #canvas_2{
+                background-color:rgb(238, 238, 235) ;
+
+            }
+
+
+
+            .special {color: rgb(22, 23, 26)}
+
+            
+        </style>
+        <br>
+        <div id ="title" title="Plotting histograms">Plotting histograms</div>
+        <div class="special"></p>Histogram with multiple columns</div>
+        <br>
+        <svg id="canvas_2" style="width:100%; height: 200px;"></svg>
+        
+        <div class="special"></p>Histogram by column</div>
+        
+        <br>
+        <select id="options" onChange="col_sel()" >
+            <option value="" selected disabled hidden> Select column</option>
+            <option value="data1">data1</option>
+            <option value="data2">data2</option>
+            <option value="data3">data3</option>
+          
+           
+           </select>
+        
+    </head>
+
+    <body>
+        <p>
+            <svg id="myCanvas" style="width:100%; height: 200px;"></svg>
+        
+            <table id="table">
+                    <thead></thead>
+                    <tbody></tbody>
+            </table>
+
+
+        </p>
+
+        <script>
+
+        var data;
+
+
+        csv_url = false ? "histogram-data.csv" : "https://raw.githubusercontent.com/SanaeAbm/Plot_Columns/main/histogram-data.csv"
+        
+
+        function col_sel(){
+
+        if (document.getElementById('options').value=="data1") {
+            d3.dsv(";",csv_url).then(tidying)
+        
+            var columns, maxValue;
+            
+    
+                    function tidying(d) {
+                        data=d
+                        maxValue = d3.reduce(d, (p, v) => Math.max(p,v.data1) , 0)
+                        updateChart(data)
+                    }
+
+                
+                    function updateChart(data) {
+
+                        svg =  d3.select("#myCanvas");
+                        w = svg.node().width.baseVal.value;
+                        h = svg.node().height.baseVal.value;
+                        z = d3.scaleLinear([0, data.length], [0, w])
+                        y = d3.scaleLinear([0, maxValue], [0,h])
+                        cat = new Set(d3.map(data, d => d.x))
+                        color = d3.scaleOrdinal(cat, d3.schemeTableau10)
+                    
+                        svgBind = svg.text("")
+                            .selectAll("rect")
+                            .data(data)
+                            
+                        svgBind.enter()
+                            .append('rect')
+                            .attr('x', (d,i) => z(i))
+                            .attr('y', d => y(maxValue - d.data1))
+                            .attr('height', d => y(d.data1))
+                            .attr('width',z(1)*0.95)
+                            .attr('fill', d => color(d.x))
+                
+                        svgBind.enter()
+                            .append("text")
+                            .attr('x', 0)
+                            .attr('y', 0)
+                            .attr('transform', 
+                                    (d , i) => 'translate(' + z(i+0.5) +
+                                    ',' + y(maxValue - d.data1 - 5000)+'),' 
+                                    + 'rotate(-90)')
+                            .text(d => d.x)
+                            
+            
+                }
+            }
+
+            else if (document.getElementById('options').value=="data2") {
+            d3.dsv(";",csv_url).then(tidying)
+        
+            var columns, maxValue;
+            
+    
+                    function tidying(d) {
+                        data=d
+                        maxValue = d3.reduce(d, (p, v) => Math.max(p,v.data2) , 0)
+                        updateChart(data)
+                    }
+
+                
+                    function updateChart(data) {
+
+                        svg =  d3.select("#myCanvas");
+                        w = svg.node().width.baseVal.value;
+                        h = svg.node().height.baseVal.value;
+                        z = d3.scaleLinear([0, data.length], [0, w])
+                        y = d3.scaleLinear([0, maxValue], [0,h])
+                        cat = new Set(d3.map(data, d => d.x))
+                        color = d3.scaleOrdinal(cat, d3.schemeTableau10)
+                    
+                        svgBind = svg.text("")
+                            .selectAll("rect")
+                            .data(data)
+                            
+                        svgBind.enter()
+                            .append('rect')
+                            .attr('x', (d,i) => z(i))
+                            .attr('y', d => y(maxValue - d.data2))
+                            .attr('height', d => y(d.data2))
+                            .attr('width',z(1)*0.95)
+                            .attr('fill', d => color(d.x))
+                
+                        svgBind.enter()
+                            .append("text")
+                            .attr('x', 0)
+                            .attr('y', 0)
+                            .attr('transform', 
+                                    (d , i) => 'translate(' + z(i+0.5) +
+                                    ',' + y(maxValue - d.data2 - 5000)+'),' 
+                                    + 'rotate(-90)')
+                            .text(d => d.x)
+                            
+            
+                }
+            }
+            if (document.getElementById('options').value=="data3") {
+            d3.dsv(";",csv_url).then(tidying)
+        
+            var columns, maxValue;
+            
+    
+                    function tidying(d) {
+                        data=d
+                        maxValue = d3.reduce(d, (p, v) => Math.max(p,v.data3) , 0)
+                        updateChart(data)
+                    }
+
+                
+                    function updateChart(data) {
+
+                        svg =  d3.select("#myCanvas");
+                        w = svg.node().width.baseVal.value;
+                        h = svg.node().height.baseVal.value;
+                        z = d3.scaleLinear([0, data.length], [0, w])
+                        y = d3.scaleLinear([0, maxValue], [0,h])
+                        cat = new Set(d3.map(data, d => d.x))
+                        color = d3.scaleOrdinal(cat, d3.schemeTableau10)
+                    
+                        svgBind = svg.text("")
+                            .selectAll("rect")
+                            .data(data)
+                            
+                        svgBind.enter()
+                            .append('rect')
+                            .attr('x', (d,i) => z(i))
+                            .attr('y', d => y(maxValue - d.data3))
+                            .attr('height', d => y(d.data3))
+                            .attr('width',z(1)*0.95)
+                            .attr('fill', d => color(d.x))
+                
+                        svgBind.enter()
+                            .append("text")
+                            .attr('x', 0)
+                            .attr('y', 0)
+                            .attr('transform', 
+                                    (d , i) => 'translate(' + z(i+0.5) +
+                                    ',' + y(maxValue - d.data3 - 5000)+'),' 
+                                    + 'rotate(-90)')
+                            .text(d => d.x)
+                            
+            
+                }
+            }
+        }
+
+        
+     
+    </script>
+    
+</body>
+
+</html>
