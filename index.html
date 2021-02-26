@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <meta charset="utf-8"/>
@@ -6,6 +7,7 @@
         <script src="https://d3js.org/d3.v6.min.js"></script>
 
         <style>
+
          #title {
             color:rgb(29, 29, 31);
             font-size:25px;
@@ -234,7 +236,58 @@
             }
         }
 
+        d3.dsv(";",csv_url).then(tidying)
         
+            var  maxValue;
+            
+    
+                    function tidying(d) {
+                        data=d
+                        maxValue = d3.reduce(d, (p, v) => Math.max(p,v.data1) , 0)
+                        updateChart(data)
+                    }
+
+
+                    function updateChart(data) {
+
+                        svg =  d3.select("#canvas_2");
+                        w = svg.node().width.baseVal.value;
+                        h = svg.node().height.baseVal.value;
+                        z = d3.scaleLinear([0, data.length], [0, w])
+                        y = d3.scaleLinear([0, maxValue], [0,h])
+                        cat = new Set(d3.map(data, d => d.x))
+                        color = d3.scaleOrdinal(cat, d3.schemeTableau10)
+                    
+                        svgBind = svg.text("")
+                            .selectAll("rect")
+                            .data(data)
+                            
+                        svgBind.enter()
+                            .append('rect')
+                            .attr("x",(d,e)=>z(e))
+                            .attr('x', (d,i) => z(i))
+                            .attr('y', d => y(maxValue - d.data1))
+                            .attr('height', d => y(d.data1))
+                            .attr('width',z(1)*0.95)
+                            .attr('fill', d => color(d.x))
+                
+                        svgBind.enter()
+                            .append("text")
+                            .attr('x', 0)
+                            .attr('y', 0)
+                            .attr("x",(d,e)=>x(d+.5))
+                            .attr('transform', 
+                                    (d , i) => 'translate(' + z(i+0.5) +
+                                    ',' + y(maxValue - d.data3 - 5000)+'),' 
+                                    + 'rotate(-90)')
+                            .text(d => d.x)
+                            
+                                                            
+                        svg.append('text')
+                                .attr('x', width / 2 + margin)
+                                .attr('y', 40)
+                                 
+                                            }
      
     </script>
     
